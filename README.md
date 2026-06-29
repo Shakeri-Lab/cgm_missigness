@@ -4,20 +4,39 @@ This folder is a standalone installable package for fitting, saving, loading, an
 
 An example fitted model is already included in this folder:
 
-- `CGM_MISSING_SIMULATOR/fitted_missingness.json`
+- `fitted_missingness.json`
 
-## Install
+## Folder Layout
 
-From the repository root:
+The main files in this GitHub folder are:
+
+- `README.md`
+- `pyproject.toml`
+- `train_missing.py`
+- `cgm_missing_simulator.py`
+- `fitted_missingness.json`
+
+You may also see folders like `build/`, `__pycache__/`, `.ipynb_checkpoints/`, or `*.egg-info`. Those are generated artifacts and are not required for using the package.
+
+## Setup
+
+First clone the repository, then move into this package folder:
 
 ```bash
-pip install ./CGM_MISSING_SIMULATOR
+git clone <your-repo-url>
+cd <your-repo-name>/CGM_MISSING_SIMULATOR
+```
+
+Then install the package:
+
+```bash
+pip install .
 ```
 
 For editable development:
 
 ```bash
-pip install -e ./CGM_MISSING_SIMULATOR
+pip install -e .
 ```
 
 ## What It Does
@@ -37,7 +56,7 @@ The file `fitted_missingness.json` is a saved missingness model produced by this
 ```python
 from cgm_missing_simulator import load_missingness_model
 
-gen = load_missingness_model("CGM_MISSING_SIMULATOR/fitted_missingness.json")
+gen = load_missingness_model("fitted_missingness.json")
 ```
 
 ## Saved JSON Format
@@ -112,7 +131,7 @@ After installation:
 fit-cgm-missingness \
   --csv-list RawData/dclp3_cgm_plus_features.csv RawData/dclp5_cgm_plus_features.csv \
   --threshold 0.5 \
-  --output CGM_MISSING_SIMULATOR/fitted_missingness.json
+  --output fitted_missingness.json
 ```
 
 ## Python Usage
@@ -131,10 +150,10 @@ fit_and_save_missingness_model(
         "RawData/dclp5_cgm_plus_features.csv",
     ],
     threshold=0.5,
-    output_path="CGM_MISSING_SIMULATOR/fitted_missingness.json",
+    output_path="fitted_missingness.json",
 )
 
-gen = load_missingness_model("CGM_MISSING_SIMULATOR/fitted_missingness.json")
+gen = load_missingness_model("fitted_missingness.json")
 
 df = pd.read_csv("my_cgm.csv")
 df["date"] = pd.to_datetime(df["date"])
