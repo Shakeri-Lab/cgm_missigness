@@ -1,0 +1,111 @@
+Metadata-Version: 2.4
+Name: cgm-missing-simulator
+Version: 0.1.0
+Summary: Standalone package for fitting, saving, loading, and applying a CGM missingness model.
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: scipy
+
+# CGM Missing Simulator
+
+This folder is a standalone installable package for fitting, saving, loading, and applying a CGM missingness model from real gap statistics.
+
+## Install
+
+From the repository root:
+
+```bash
+pip install ./CGM_MISSING_SIMULATOR
+```
+
+For editable development:
+
+```bash
+pip install -e ./CGM_MISSING_SIMULATOR
+```
+
+## What It Does
+
+The package learns a statistical missingness model from real CGM gap data:
+
+- hourly probability that a gap starts
+- separate day/night gap-duration behavior
+- JSON save/load support for the fitted generator
+
+It does not train an imputation model.
+
+## Fitting Data Format
+
+The CSV files used for fitting should contain:
+
+- `SID`: subject identifier
+- `DT_Index`: timestamp
+- `Value`: CGM value
+
+Example:
+
+```csv
+SID,DT_Index,Value
+1001,2024-01-01 00:00:00,112
+1001,2024-01-01 00:05:00,111
+1001,2024-01-01 00:10:00,
+```
+
+## Application Data Format
+
+To apply the fitted mask later with `generate_mask(...)`, your DataFrame should contain at least:
+
+- `date`
+- `cgm`
+
+Example:
+
+```csv
+date,cgm,meal,bolus
+2024-01-01 00:00:00,112,0,0
+2024-01-01 00:05:00,111,0,0
+2024-01-01 00:10:00,109,0,0
+```
+
+Extra columns are preserved. Only `cgm_simulated` is modified.
+
+## CLI Usage
+
+After installation:
+
+```bash
+fit-cgm-missingness \
+  --csv-list RawData/dclp3_cgm_plus_features.csv RawData/dclp5_cgm_plus_features.csv \
+  --threshold 0.5 \
+  --output saved_masks/pedap_missingness.json
+```
+
+## Python Usage
+
+```python
+import pandas as pd
+
+from cgm_missing_simulator import (
+    fit_and_save_missingness_model,
+    load_missingness_model,
+)
+
+fit_and_save_missingness_model(
+    [
+        "RawData/dclp3_cgm_plus_features.csv",
+        "RawData/dclp5_cgm_plus_features.csv",
+    ],
+    threshold=0.5,
+    output_path="saved_masks/pedap_missingness.json",
+)
+
+gen = load_missingness_model("saved_masks/pedap_missingness.json")
+
+df = pd.read_csv("my_cgm.csv")
+df["date"] = pd.to_datetime(df["date"])
+df = df.sort_values("date").reset_index(drop=True)
+
+masked_df = gen.generate_mask(df)
+```

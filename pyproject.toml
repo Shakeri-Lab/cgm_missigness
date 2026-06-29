@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cgm-missing-simulator"
+version = "0.1.0"
+description = "Standalone package for fitting, saving, loading, and applying a CGM missingness model."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+]
+
+[project.scripts]
+fit-cgm-missingness = "train_missing:main"
+
+[tool.setuptools]
+py-modules = ["train_missing", "cgm_missing_simulator"]

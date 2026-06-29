@@ -1,0 +1,2 @@
+[console_scripts]
+fit-cgm-missingness = train_missing:main
