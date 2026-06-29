@@ -51,13 +51,21 @@ It does not train an imputation model.
 
 ## Included Fitted Model
 
-The file `fitted_missingness.json` is a saved missingness model produced by this package. You can load it directly without refitting:
+The file `fitted_missingness.json` is a saved missingness model produced by this package.
+
+The current fitted file was built from two larger CGM datasets, DCLP3 and DCLP5, which were used here for fitting.
+
+Its purpose is to provide a ready-to-use missingness model so you can apply realistic CGM masking without running the fitting step again.
+
+You can load it directly without refitting:
 
 ```python
 from cgm_missing_simulator import load_missingness_model
 
 gen = load_missingness_model("fitted_missingness.json")
 ```
+
+This fitted model is not limited to those two datasets. You can refit the same pipeline on other datasets as long as they follow the fitting format described below. In practice, the model can be extended to other CGM datasets with the same schema, and typically benefits from larger or denser datasets because they provide richer missingness statistics.
 
 ## Saved JSON Format
 
@@ -123,13 +131,21 @@ date,cgm,meal,bolus
 
 Extra columns are preserved. Only `cgm_simulated` is modified.
 
+## Purpose Of The Main Functions
+
+- `fit_missingness_model(csv_list, threshold)`: fits a statistical missingness generator from one or more real CGM datasets.
+- `save_missingness_model(generator, output_path, ...)`: saves a fitted generator to JSON.
+- `load_missingness_model(input_path)`: loads a previously saved JSON missingness model.
+- `fit_and_save_missingness_model(csv_list, threshold, output_path)`: convenience wrapper that fits and saves in one step.
+- `gen.generate_mask(df)`: applies the fitted missingness model to a DataFrame and writes the masked signal into `cgm_simulated`.
+
 ## CLI Usage
 
 After installation:
 
 ```bash
 fit-cgm-missingness \
-  --csv-list RawData/dclp3_cgm_plus_features.csv RawData/dclp5_cgm_plus_features.csv \
+  --csv-list dclp3_cgm_plus_features.csv dclp5_cgm_plus_features.csv \
   --threshold 0.5 \
   --output fitted_missingness.json
 ```
@@ -146,8 +162,8 @@ from cgm_missing_simulator import (
 
 fit_and_save_missingness_model(
     [
-        "RawData/dclp3_cgm_plus_features.csv",
-        "RawData/dclp5_cgm_plus_features.csv",
+        "dclp3_cgm_plus_features.csv",
+        "dclp5_cgm_plus_features.csv",
     ],
     threshold=0.5,
     output_path="fitted_missingness.json",
