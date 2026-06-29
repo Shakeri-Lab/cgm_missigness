@@ -15,8 +15,16 @@ The main files in this GitHub folder are:
 - `train_missing.py`
 - `cgm_missing_simulator.py`
 - `fitted_missingness.json`
+- `example.ipynb`
 
 You may also see folders like `build/`, `__pycache__/`, `.ipynb_checkpoints/`, or `*.egg-info`. Those are generated artifacts and are not required for using the package.
+
+The notebook `example.ipynb` gives a short end-to-end example of:
+
+- loading `fitted_missingness.json`
+- injecting missingness into a sample CGM file
+- reconstructing the masked CGM with linear interpolation
+- plotting ground truth, observed, and imputed CGM
 
 ## Setup
 
@@ -177,3 +185,13 @@ df = df.sort_values("date").reset_index(drop=True)
 
 masked_df = gen.generate_mask(df)
 ```
+
+## Notebook Example
+
+After installation, you can also open and run:
+
+```bash
+jupyter notebook example.ipynb
+```
+
+The notebook provides a compact demonstration of how to apply the fitted missingness model and visualize the masked versus reconstructed CGM signal.
